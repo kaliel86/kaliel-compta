@@ -30,7 +30,7 @@ class KalielCompta
 
     public function output()
     {
-        echo '<h1>CACA</h1>';
+        echo '<h1>Compta</h1>';
     }
 
 }
