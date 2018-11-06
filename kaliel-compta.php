@@ -31,6 +31,39 @@ class KalielCompta
     public function output()
     {
         echo '<h1>Compta</h1>';
+        echo '<table class="wp-list-table widefat fixed striped">';
+        echo '<thead><tr><td>Date facture</td><td>N° Facture</td><td>Client</td><td>Montant HT</td><td>Montant TVA</td><td>Montant TTC</td><td>Règlement</td></tr></thead>';
+        echo '<tbody>';
+
+        foreach ($this->getOrders() as $order) {
+            echo '<tr>';
+            echo '<td></td>';
+            echo '<td></td>';
+            echo '<td>' . $order->get_user()->first_name . ' ' . $order->get_user()->last_name . '</td>';
+            echo '<td></td>';
+            echo '<td></td>';
+            echo '<td></td>';
+            echo '<td></td>';
+            echo '</tr>';
+        }
+        echo '</tbody>';
+        echo '/<table>';
+        echo '<pre>';
+        var_dump($this->getOrders());
+        echo '</pre>';
+    }
+
+
+    /**
+     * @return WC_Order[]
+     * @throws Exception
+     */
+    public function getOrders(): array
+    {
+        $query = new WC_Order_Query();
+        $query->set('status', 'completed');
+        $orders = $query->get_orders();
+        return $orders;
     }
 
 }
