@@ -31,26 +31,38 @@ class KalielCompta
     public function output()
     {
         echo '<h1>Compta</h1>';
+        echo '<a class="button button-primary button-hero" href="http://labelpoulette.test/wp-admin/customize.php">Télécharger le fichier CSV</a>';
+        echo '<hr>';
         echo '<table class="wp-list-table widefat fixed striped">';
-        echo '<thead><tr><td>Date facture</td><td>N° Facture</td><td>Client</td><td>Montant HT</td><td>Montant TVA</td><td>Montant TTC</td><td>Règlement</td></tr></thead>';
+        echo '<thead><tr><td>Date</td><td>N° Facture</td><td>Client</td><td>Produits HT</td><td>TVA Produits</td><td>Produits TTC</td><td>Transport HT</td><td>TVA transport</td><td>Transport TTC</td></td><td>Total TTC</td><td>Règlement</td></tr></thead>';
         echo '<tbody>';
 
         foreach ($this->getOrders() as $order) {
+            $montantHT = number_format((float)$order->get_total() - $order->get_total_tax() - $order->get_shipping_total() , wc_get_price_decimals(), '.', '');
+            $montantTTC = number_format((float)$order->get_total() - $order->get_shipping_total()- $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
+            $tva = number_format((float)$order->get_total_tax(), wc_get_price_decimals(), '.', '');
+
+            $transportHT = number_format((float)$order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
+            $transportTVA = number_format((float)$order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
+            $transportTTC = number_format((float)$order->get_shipping_total(), wc_get_price_decimals(), '.', '');
+
+
             echo '<tr>';
-            echo '<td></td>';
-            echo '<td></td>';
+            echo '<td>' . $order->get_date_created()->date('d/m/Y') . '</td>';
+            echo "<td></td>";
             echo '<td>' . $order->get_user()->first_name . ' ' . $order->get_user()->last_name . '</td>';
-            echo '<td></td>';
-            echo '<td></td>';
-            echo '<td></td>';
-            echo '<td></td>';
+            echo "<td>{$montantHT}</td>";
+            echo "<td>{$tva}</td>";
+            echo "<td>{$montantTTC}</td>";
+            echo "<td>{$transportHT}</td>";
+            echo "<td>{$transportTVA}</td>";
+            echo "<td>{$transportTTC}</td>";
+            echo "<td>{$order->get_total()}</td>";
+            echo "<td>{$order->get_payment_method_title()}</td>";
             echo '</tr>';
         }
         echo '</tbody>';
         echo '/<table>';
-        echo '<pre>';
-        var_dump($this->getOrders());
-        echo '</pre>';
     }
 
 
@@ -61,7 +73,6 @@ class KalielCompta
     public function getOrders(): array
     {
         $query = new WC_Order_Query();
-        $query->set('status', 'completed');
         $orders = $query->get_orders();
         return $orders;
     }
