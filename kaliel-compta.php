@@ -38,9 +38,9 @@ class KalielCompta
         echo '<tbody>';
 
         foreach ($this->getOrders() as $order) {
-            $montantHT = number_format((float)$order->get_total() - $order->get_total_tax() - $order->get_shipping_total() , wc_get_price_decimals(), '.', '');
-            $montantTTC = number_format((float)$order->get_total() - $order->get_shipping_total()- $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
-            $tva = number_format((float)$order->get_total_tax(), wc_get_price_decimals(), '.', '');
+            $montantHT = number_format((float)$order->get_total() - $order->get_total_tax() - $order->get_shipping_total(), wc_get_price_decimals(), '.', '');
+            $montantTTC = number_format((float)$order->get_total() - $order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
+            $tva = number_format((float)$order->get_total_tax() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
 
             $transportHT = number_format((float)$order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
             $transportTVA = number_format((float)$order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
@@ -50,7 +50,7 @@ class KalielCompta
             echo '<tr>';
             echo '<td>' . $order->get_date_created()->date('d/m/Y') . '</td>';
             echo "<td></td>";
-            echo '<td>' . $order->get_user()->first_name . ' ' . $order->get_user()->last_name . '</td>';
+            echo '<td>' . $order->get_user()->display_name . '</td>';
             echo "<td>{$montantHT}</td>";
             echo "<td>{$tva}</td>";
             echo "<td>{$montantTTC}</td>";
