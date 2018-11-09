@@ -25,7 +25,6 @@ class KalielCompta
             'dashicons-analytics',
             30
         );
-
     }
 
     public function output()
@@ -46,10 +45,12 @@ class KalielCompta
             $transportTVA = number_format((float)$order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
             $transportTTC = number_format((float)$order->get_shipping_total(), wc_get_price_decimals(), '.', '');
 
+            $invoice = wcpdf_get_invoice($order);
+
 
             echo '<tr>';
             echo '<td>' . $order->get_date_created()->date('d/m/Y') . '</td>';
-            echo "<td></td>";
+            echo "<td>{$invoice->get_number()}</td>";
             echo '<td>' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() . '</td>';
             echo "<td>{$montantHT}</td>";
             echo "<td>{$tva}</td>";
@@ -63,6 +64,8 @@ class KalielCompta
         }
         echo '</tbody>';
         echo '/<table>';
+
+
     }
 
 
