@@ -50,7 +50,7 @@ class KalielCompta
             echo '<tr>';
             echo '<td>' . $order->get_date_created()->date('d/m/Y') . '</td>';
             echo "<td></td>";
-            echo '<td>' . $order->get_user()->display_name . '</td>';
+            echo '<td>' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() . '</td>';
             echo "<td>{$montantHT}</td>";
             echo "<td>{$tva}</td>";
             echo "<td>{$montantTTC}</td>";
