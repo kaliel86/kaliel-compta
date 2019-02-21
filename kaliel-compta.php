@@ -43,9 +43,9 @@ class KalielCompta
             $montantTTC = number_format((float)$order->get_total() - $order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
             $tva = number_format((float)$order->get_total_tax() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
 
-            $transportHT = number_format((float)$order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
-            $transportTVA = number_format((float)$order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
-            $transportTTC = number_format((float)$order->get_shipping_total(), wc_get_price_decimals(), '.', '');
+            $transportHT = $order->get_shipping_total();
+            $transportTVA = $order->get_shipping_tax();
+            $transportTTC = $order->get_shipping_total() + $order->get_shipping_tax();
 
             $invoice = wcpdf_get_invoice($order);
 
@@ -67,7 +67,6 @@ class KalielCompta
         echo '</tbody>';
         echo '<table>';
 
-
     }
 
 
@@ -88,9 +87,9 @@ class KalielCompta
         $montantTTC = number_format((float)$order->get_total() - $order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
         $tva = number_format((float)$order->get_total_tax() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
 
-        $transportHT = number_format((float)$order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
-        $transportTVA = number_format((float)$order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
-        $transportTTC = number_format((float)$order->get_shipping_total(), wc_get_price_decimals(), '.', '');
+        $transportHT = (float)$order->get_shipping_total();
+        $transportTVA = (float)$order->get_shipping_tax();
+        $transportTTC = $transportHT + $transportTVA;
 
         $invoice = wcpdf_get_invoice($order)->get_number();
 
@@ -109,7 +108,7 @@ class KalielCompta
             return;
 
         header('Content-Type: application/csv');
-        header('Content-Disposition: attachment; filename=export_compta_'.date('Y-m-d').'.csv');
+        header('Content-Disposition: attachment; filename=export_compta_' . date('Y-m-d') . '.csv');
         header('Pragma: no-cache');
 
         // output the CSV data
