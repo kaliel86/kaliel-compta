@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name:  Kaliel Compta
-Plugin URI:   https://developer.wordpress.org/plugins/the-basics/
+Plugin URI:   https://github.com/kaliel86/kaliel-compta
 Description:  Export woocommerce dans un fichier csv pour compta
 Version:      1
 Author:       Kaliel
@@ -25,12 +25,14 @@ class KalielCompta
             'dashicons-analytics',
             30
         );
+
+        add_action('admin_post_print.csv', [$this, 'print_csv']);
     }
 
     public function output()
     {
         echo '<h1>Compta</h1>';
-        echo '<a class="button button-primary button-hero" href="http://labelpoulette.test/wp-admin/customize.php">Télécharger le fichier CSV</a>';
+        echo '<a class="button button-primary button-hero" href="' . admin_url('admin-post.php?action=print.csv') . '">Télécharger le fichier CSV</a>';
         echo '<hr>';
         echo '<table class="wp-list-table widefat fixed striped">';
         echo '<thead><tr><td>Date</td><td>N° Facture</td><td>Client</td><td>Produits HT</td><td>TVA Produits</td><td>Produits TTC</td><td>Transport HT</td><td>TVA transport</td><td>Transport TTC</td></td><td>Total TTC</td><td>Règlement</td></tr></thead>';
@@ -63,7 +65,7 @@ class KalielCompta
             echo '</tr>';
         }
         echo '</tbody>';
-        echo '/<table>';
+        echo '<table>';
 
 
     }
@@ -80,6 +82,55 @@ class KalielCompta
         return $orders;
     }
 
+    protected function orderToData($order = null)
+    {
+        $montantHT = number_format((float)$order->get_total() - $order->get_total_tax() - $order->get_shipping_total(), wc_get_price_decimals(), '.', '');
+        $montantTTC = number_format((float)$order->get_total() - $order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
+        $tva = number_format((float)$order->get_total_tax() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
+
+        $transportHT = number_format((float)$order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
+        $transportTVA = number_format((float)$order->get_shipping_tax(), wc_get_price_decimals(), '.', '');
+        $transportTTC = number_format((float)$order->get_shipping_total(), wc_get_price_decimals(), '.', '');
+
+        $invoice = wcpdf_get_invoice($order)->get_number();
+
+        $date = $order->get_date_created()->date('d/m/Y');
+
+        $customer = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+        $totalTTC = $order->get_total();
+        $method = $order->get_payment_method_title();
+
+        return [$date, $invoice, $customer, $montantHT, $tva, $montantTTC, $transportHT, $transportTVA, $transportTTC, $totalTTC, $method];
+    }
+
+    public function print_csv()
+    {
+        if (!current_user_can('manage_options'))
+            return;
+
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment; filename=export_compta_'.date('Y-m-d').'.csv');
+        header('Pragma: no-cache');
+
+        // output the CSV data
+        echo $this->dataToCsv();
+    }
+
+    protected function dataToCsv()
+    {
+        $headers = ['Date', 'N° Facture', 'Client', 'Montant HT', 'TVA', 'Montant TTC', 'Transport HT', 'TVA Transport', 'Transport TTC', 'Total TTC', 'Mode de règlement'];
+        ob_start();
+        $fp = fopen("php://output", 'w');
+        fputcsv($fp, $headers);
+
+        foreach ($this->getOrders() as $order) {
+            fputcsv($fp, $this->orderToData($order));
+        }
+
+        fclose($fp);
+        return ob_get_clean();
+    }
+
 }
 
 
@@ -89,3 +140,4 @@ function KalielCompta()
 }
 
 add_action('init', 'KalielCompta');
+
