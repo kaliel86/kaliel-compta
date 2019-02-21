@@ -3,7 +3,7 @@
 Plugin Name:  Kaliel Compta
 Plugin URI:   https://github.com/kaliel86/kaliel-compta
 Description:  Export woocommerce dans un fichier csv pour compta
-Version:      1
+Version:      1.0.1
 Author:       Kaliel
 Author URI:   kaliel.fr
 License:      GPL2
