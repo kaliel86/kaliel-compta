@@ -45,7 +45,7 @@ class KalielCompta
 
             $transportHT = $order->get_shipping_total();
             $transportTVA = $order->get_shipping_tax();
-            $transportTTC = $order->get_shipping_total() + $order->get_shipping_tax();
+            $transportTTC = (float)$order->get_shipping_total() + (float)$order->get_shipping_tax();
 
             $invoice = wcpdf_get_invoice($order);
 
