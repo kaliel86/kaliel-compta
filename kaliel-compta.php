@@ -79,7 +79,7 @@ class KalielCompta
         /*$query = new WC_Order_Query(['limit' => -1]);
         $orders = $query->get_orders();*/
 
-        $orders = wc_get_orders(['limit' => -1, 'status' => 'completed']);
+        $orders = wc_get_orders(['limit' => -1, 'status' => 'completed', 'type' => 'shop_order']);
         return $orders;
     }
 
