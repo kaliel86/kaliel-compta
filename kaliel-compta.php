@@ -76,14 +76,10 @@ class KalielCompta
      */
     public function getOrders(): array
     {
-        $query = new WC_Order_Query(['limit' => -1]);
-        $orders = $query->get_orders();
-        echo '<pre>';
-        foreach ($orders as $order) {
-            var_dump(get_class($order));
-        }
+        /*$query = new WC_Order_Query(['limit' => -1]);
+        $orders = $query->get_orders();*/
 
-        echo '</pre>';
+        $orders = wc_get_orders(['limit' => -1, 'status' => 'completed']);
         return $orders;
     }
 
