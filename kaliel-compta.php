@@ -76,7 +76,7 @@ class KalielCompta
      */
     public function getOrders(): array
     {
-        $query = new WC_Order_Query();
+        $query = new WC_Order_Query(['limit' => -1]);
         $orders = $query->get_orders();
         return $orders;
     }
